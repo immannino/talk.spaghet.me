@@ -26,8 +26,13 @@
 <body>
     <div class="container">
         <div id="textbox"></div>
-        <button id="play">Play</button>
-        <button id="copy">Copy to Clipboard</button>
+        <div class="button-group">
+            <button id="play">Play</button>
+            <button id="copy">Copy to Clipboard</button>
+            <label for="hide">
+                <input type="checkbox" name="hide" id="hide"> hide text from url?
+            </label>
+        </div>
         <hr>
         <a href="/usage.html">Try a new message</a>
         <a href="https://mannino.dev" target="_blank" style="font-size: 8px">✨ made by tones ✨</a>
@@ -39,12 +44,21 @@
             const textbox = document.querySelector('#textbox');
             const playButton = document.querySelector('#play');
             const copyButton = document.querySelector('#copy');
+            const hideButton = document.querySelector('#hide');
 
             copyButton.addEventListener('click', () => {
                 const textArea = document.createElement("textarea");
 
                 textArea.style.position = "fixed";
-                textArea.textContent = `${window.location.origin}/?code=${btoa(encodeURIComponent(textbox.textContent))}`;
+                
+                if (hideButton.checked) {
+                    textArea.textContent = `${window.location.origin}/?code=${btoa(encodeURIComponent(textbox.textContent))}`;
+                } else {
+                    textArea.textContent = `${window.location.origin}/?message=${encodeURIComponent(textbox.textContent)}`;
+                }
+
+                console.log(textArea.textContent);
+
                 document.body.appendChild(textArea);
                 textArea.focus();
                 textArea.select();

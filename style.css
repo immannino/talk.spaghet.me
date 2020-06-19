@@ -48,6 +48,11 @@ form input[type="submit"] {
     margin-top: 0.5rem;
 }
 
+.button-group {
+    display: flex;
+    flex-direction: column;
+}
+
 hr {
     border-style: dashed;
     color: blue;
@@ -57,5 +62,9 @@ hr {
 @media (min-width: 600px) {
     body {
         place-content: center;
+    }
+    
+    .button-group {
+        display: block;
     }
 }
