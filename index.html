@@ -44,7 +44,7 @@
                 const textArea = document.createElement("textarea");
 
                 textArea.style.position = "fixed";
-                textArea.textContent = `${window.location.origin}/?message=${btoa(encodeURIComponent(textbox.textContent))}`;
+                textArea.textContent = `${window.location.origin}/?code=${btoa(encodeURIComponent(textbox.textContent))}`;
                 document.body.appendChild(textArea);
                 textArea.focus();
                 textArea.select();
@@ -67,14 +67,15 @@
                         function($0, $1, $2, $3) { queryString[$1] = $3; }
                     );
 
-                    if (!queryString.message) { 
+                    if (!queryString.message && !queryString.code) { 
                         new Error('Wrong query param provided');
                     } else {
                         let text;
                         
                         // Encode things for click 2 copy (to hide)
-                        if (isBase64(queryString.message)) {
-                            text = decodeURIComponent(atob(queryString.message));
+                        if (queryString.code) {
+                            console.log('code')
+                            text = decodeURIComponent(atob(queryString.code));
                         } else {
                             text = decodeURIComponent(queryString.message).trim().replace(/\+/g, ' ');
                         }
@@ -92,6 +93,7 @@
                     throw new Error('No query params provided');
                 }
             } catch (err) {
+                console.log(err);
                 window.location.replace('/usage.html');
             }
         }
