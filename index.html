@@ -13,7 +13,7 @@
     <meta data-hid="title" name="title" content="Text to Speech">
     <meta data-hid="description" name="description" content="Lightweight Text to Speech to share with friends">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Text to Speech | usage">
+    <meta property="og:title" content="Text to Speech">
     <meta property="og:description" content="Lightweight Text to Speech to share with friends">
     <meta property="og:image" content="https://webstockreview.net/images/megaphone-clipart-emoji-10.png">
     <meta name="twitter:card" content="summary">
@@ -44,7 +44,7 @@
                 const textArea = document.createElement("textarea");
 
                 textArea.style.position = "fixed";
-                textArea.textContent = `${window.location.origin}/?message=${encodeURIComponent(textbox.textContent)}`;
+                textArea.textContent = `${window.location.origin}/?message=${btoa(encodeURIComponent(textbox.textContent))}`;
                 document.body.appendChild(textArea);
                 textArea.focus();
                 textArea.select();
@@ -68,10 +68,17 @@
                     );
 
                     if (!queryString.message) { 
-
                         new Error('Wrong query param provided');
                     } else {
-                        const text = decodeURIComponent(queryString.message).trim().replace(/\+/g, ' ');
+                        let text;
+                        
+                        // Encode things for click 2 copy (to hide)
+                        if (isBase64(queryString.message)) {
+                            text = decodeURIComponent(atob(queryString.message));
+                        } else {
+                            text = decodeURIComponent(queryString.message).trim().replace(/\+/g, ' ');
+                        }
+
                         textbox.textContent = text;
 
                         const utterance = new SpeechSynthesisUtterance(text);
@@ -85,9 +92,15 @@
                     throw new Error('No query params provided');
                 }
             } catch (err) {
-                console.log(err);
-                console.log('hehehehe')
                 window.location.replace('/usage.html');
+            }
+        }
+
+        function isBase64(str) {
+            try {
+                return btoa(atob(str)) == str;
+            } catch (err) {
+                return false;
             }
         }
     </script>
