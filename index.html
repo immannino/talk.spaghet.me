@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="title" content="Text to Speech">
+    <meta name="description" content="Lightweight Text to Speech to share with friends">
+    <meta property="og:site_name" content="Text to Speech">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:url" content="http://talk.spaghet.me">
+    <meta name="twitter:site" content="http://talk.spaghet.me">
+    <meta data-hid="title" name="title" content="Text to Speech">
+    <meta data-hid="description" name="description" content="Lightweight Text to Speech to share with friends">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Text to Speech | usage">
+    <meta property="og:description" content="Lightweight Text to Speech to share with friends">
+    <meta property="og:image" content="https://webstockreview.net/images/megaphone-clipart-emoji-10.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Text to Speech">
+    <meta name="twitter:description" content="Lightweight Text to Speech to share with friends">
+    <meta name="twitter:image" content="https://webstockreview.net/images/megaphone-clipart-emoji-10.png">
+    <meta name="twitter:image:alt" content="Megaphone">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div id="textbox"></div>
+        <button id="play">Play</button>
+        <button id="copy">Copy to Clipboard</button>
+        <hr>
+        <a href="/usage.html">Try a new message</a>
+        <a href="https://mannino.dev" target="_blank" style="font-size: 8px">✨ made by tones ✨</a>
+    </div>
+    <script>
+        window.onload = () => {
+            let queryString = {};
+
+            const textbox = document.querySelector('#textbox');
+            const playButton = document.querySelector('#play');
+            const copyButton = document.querySelector('#copy');
+
+            copyButton.addEventListener('click', () => {
+                const textArea = document.createElement("textarea");
+
+                textArea.style.position = "fixed";
+                textArea.textContent = `${window.location.origin}/?message=${encodeURIComponent(textbox.textContent)}`;
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                textArea.setSelectionRange(0, 99999); /*For mobile devices*/
+
+                /* Copy the text inside the text field */
+                try {
+                    document.execCommand("copy");
+                } catch (err) {
+                    console.log(err);
+                } finally {
+                    document.body.removeChild(textArea);
+                }
+            });
+
+            try {
+                if (window.location.search) {
+                    window.location.search.replace(
+                        new RegExp("([^?=&]+)(=([^&]*))?", "g"),
+                        function($0, $1, $2, $3) { queryString[$1] = $3; }
+                    );
+
+                    if (!queryString.message) { 
+
+                        new Error('Wrong query param provided');
+                    } else {
+                        const text = decodeURIComponent(queryString.message).trim().replace(/\+/g, ' ');
+                        textbox.textContent = text;
+
+                        const utterance = new SpeechSynthesisUtterance(text);
+                        playButton.addEventListener('click', () => speechSynthesis.speak(utterance));
+
+                        // Only works in some browsers. Blocked in chrome
+                        playButton.click();
+                        playButton.focus();
+                    }
+                } else {
+                    throw new Error('No query params provided');
+                }
+            } catch (err) {
+                console.log(err);
+                console.log('hehehehe')
+                window.location.replace('/usage.html');
+            }
+        }
+    </script>
+</body>
+</html>
